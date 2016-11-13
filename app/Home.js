@@ -13,7 +13,8 @@ import {
   Text,
   View,
   ListView,
-  AlertIOS
+  AlertIOS,
+  AsyncStorage
 } from 'react-native'
 
 const firebaseConfig = {
@@ -30,6 +31,7 @@ export default class GroceryApp extends Component {
     super(props)
     this.itemsRef = firebaseApp.database().ref(),
     this.state = {
+      user: null,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -40,12 +42,31 @@ export default class GroceryApp extends Component {
     // this.setState({
     //   dataSource: this.state.dataSource.cloneWithRows([{ title: 'Pizza' }])
     // })
+
+    AsyncStorage.getItem("user").then((user) => {
+      if(user) {
+        this.setState({ user: user })
+        console.log("USER: ", user)
+      }
+    })
+
+    var user = firebase.auth().currentUser
+    this.setState({ user: user })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ user: user })
+        AsyncStorage.setItem('user', JSON.stringify(user))
+        console.log("USER: ", user)
+      } else {
+        this.setState({ user: null })
+        console.log('No User!')
+      }
+    })
     this.listenForItems(this.itemsRef)
   }
 
   listenForItems(itemsRef) {
     itemsRef.on('value', (snap) => {
-
       // get children as an array
       var items = []
       snap.forEach((child) => {
@@ -54,7 +75,6 @@ export default class GroceryApp extends Component {
           _key: child.key
         })
       })
-
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(items)
       })
@@ -81,6 +101,7 @@ export default class GroceryApp extends Component {
   }
 
   _renderItem(item) {
+    debugger
     const onPress = () => {
       AlertIOS.prompt(
         'Gots It',
@@ -98,13 +119,27 @@ export default class GroceryApp extends Component {
     )
   }
 
+  renderListPage() {
+    return (
+      <View>
+        <StatusBar title="Grocery List" />
+        <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>
+        <ActionButton title="Add" onPress={this._addItem.bind(this)}/>
+      </View>
+    )
+  }
+
+  renderLoginPage() {
+    return (
+      <Login setUser={this._setUser}/>
+    )
+  }
+
   render() {
+    let component = this.state.user ? this.renderListPage() : this.renderLoginPage()
     return (
       <View style={styles.container}>
-        <Login setUser={this._setUser}/>
-        {/*<StatusBar title="Grocery List" />*/}
-        {/*<ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview}/>*/}
-        {/*<ActionButton title="Add" onPress={this._addItem.bind(this)}/>*/}
+        {component}
       </View>
     )
   }

@@ -27,9 +27,6 @@ class Login extends Component {
     }
   }
 
-  componentDidMount() {
-  }
-
   textInputFocused() {
     this.setState({ message: '' })
     this.refs.scroll.scrollTo({x: 0, y: 100, animated: true})
