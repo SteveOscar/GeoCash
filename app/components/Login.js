@@ -1,6 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
+import * as firebase from 'firebase'
 import ReactNative from 'react-native'
 import loginStyles from '../styles/loginStyles'
 import Scheme from '../styles/colorScheme.js'
@@ -18,7 +19,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      nameText: '',
+      emailText: '',
       passwordText: '',
       isLoading: false,
       message: '',
@@ -51,6 +52,34 @@ class Login extends Component {
     if(type === 'new' && !newUser) { this.setState({ newUser: true }) }
   }
 
+  onLoginPressed() {
+    if(this.state.newUser) {
+      this.signUp()
+    } else {
+      this.signIn()
+    }
+  }
+
+  signUp() {
+    const { emailText, passwordText } = this.state
+    firebase.auth().createUserWithEmailAndPassword(emailText, passwordText).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+  }
+
+  signIn() {
+    const { emailText, passwordText } = this.state
+    firebase.auth().signInWithEmailAndPassword(emailText, passwordText).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+  }
+
   render() {
     return (
       <View style={loginStyles.container}>
@@ -75,13 +104,14 @@ class Login extends Component {
               <ToggleButton title={'Existing User'} selected={!this.state.newUser} onPress={this.onTogglePressed.bind(this, 'existing')}/>
             </View>
             <Text allowFontScaling={false} style={loginStyles.headerText2}>Welcome to the app</Text>
-            <Text allowFontScaling={false} style={loginStyles.headerText}>Username:</Text>
+            <Text allowFontScaling={false} style={loginStyles.headerText}>Email:</Text>
             <TextInput
+              autoCapitalize={'none'}
               style={loginStyles.inputStyle}
-              onChangeText={(text) => this.setState({nameText})}
-              value={this.state.nameText}
+              onChangeText={(emailText) => this.setState({emailText})}
+              value={this.state.emailText}
               autoCorrect={false}
-              maxLength={20}
+              maxLength={40}
               selectionColor={Scheme.color3}
               keyboardType={'default'}
               onFocus={this.textInputFocused.bind(this)}
@@ -89,8 +119,9 @@ class Login extends Component {
               />
             <Text allowFontScaling={false} style={loginStyles.headerText}>Password:</Text>
             <TextInput
+              autoCapitalize={'none'}
               style={loginStyles.inputStyle}
-              onChangeText={(text) => this.setState({passwordText})}
+              onChangeText={(passwordText) => this.setState({passwordText})}
               value={this.state.passwordText}
               autoCorrect={false}
               maxLength={20}
@@ -102,7 +133,7 @@ class Login extends Component {
             <Text allowFontScaling={false} >{this.state.message}</Text>
           </View>
         </ScrollView>
-        <ActionButton title={actionText}/>
+        <ActionButton title={actionText} onPress={this.onLoginPressed.bind(this)}/>
       </View>
     )
   }
