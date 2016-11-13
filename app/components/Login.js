@@ -2,6 +2,8 @@
 
 import React, {Component} from 'react'
 import * as firebase from 'firebase'
+import firebaseConfig, { itemsRef } from '../firebase'
+import { Actions } from 'react-native-router-flux'
 import ReactNative from 'react-native'
 import loginStyles from '../styles/loginStyles'
 import Scheme from '../styles/colorScheme.js'
