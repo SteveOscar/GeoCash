@@ -1,0 +1,111 @@
+'use strict'
+
+import React, {Component} from 'react'
+import ReactNative from 'react-native'
+import loginStyles from '../styles/loginStyles'
+import Scheme from '../styles/colorScheme.js'
+
+import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard'
+const StatusBar = require('./StatusBar')
+const ActionButton = require('./ActionButton')
+const ToggleButton = require('./ToggleButton')
+const constants = loginStyles.constants
+const { StyleSheet, Text, View, TouchableHighlight, ScrollView, Animated, TextInput} = ReactNative
+
+const { width, height } = require('Dimensions').get('window')
+
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nameText: '',
+      passwordText: '',
+      isLoading: false,
+      message: '',
+      newUser: true
+    }
+  }
+
+  componentDidMount() {
+  }
+
+  textInputFocused() {
+    this.setState({ message: '' })
+    this.refs.scroll.scrollTo({x: 0, y: 100, animated: true})
+  }
+
+  textInputBlur() {
+    dismissKeyboard()
+    this.refs.scroll.scrollTo({x: 0, y: 0, animated: true})
+  }
+
+  onButtonPressed() {
+    if(this.state.isLoading) { return }
+    this.setState({ isLoading: true })
+    this._executeQuery()
+  }
+
+  onTogglePressed(type) {
+    const { newUser } = this.state
+    if(type === 'existing' && newUser) { this.setState({ newUser: false }) }
+    if(type === 'new' && !newUser) { this.setState({ newUser: true }) }
+  }
+
+  render() {
+    return (
+      <View style={loginStyles.container}>
+        {this.renderButtons()}
+      </View>
+    )
+  }
+
+  renderButtons() {
+    const { newUser } = this.state
+    const spinner = this.state.isLoading ? (<ActivityIndicator size='large' color='white'/>) : (<View style={{height: 35}} />)
+    const statusText = newUser ? 'New User' : 'Existing User'
+    const actionText = newUser ? 'Sign Up' : 'Login'
+    return (
+      <View>
+        <StatusBar title={statusText} />
+        <ScrollView ref='scroll'>
+          <View style={loginStyles.loginContainer}>
+                      {spinner}
+            <View style={loginStyles.loginFunctionView}>
+              <ToggleButton title={'New User'} selected={this.state.newUser} onPress={this.onTogglePressed.bind(this, 'new')}/>
+              <ToggleButton title={'Existing User'} selected={!this.state.newUser} onPress={this.onTogglePressed.bind(this, 'existing')}/>
+            </View>
+            <Text allowFontScaling={false} style={loginStyles.headerText2}>Welcome to the app</Text>
+            <Text allowFontScaling={false} style={loginStyles.headerText}>Username:</Text>
+            <TextInput
+              style={loginStyles.inputStyle}
+              onChangeText={(text) => this.setState({nameText})}
+              value={this.state.nameText}
+              autoCorrect={false}
+              maxLength={20}
+              selectionColor={Scheme.color3}
+              keyboardType={'default'}
+              onFocus={this.textInputFocused.bind(this)}
+              onBlur={this.textInputBlur.bind(this)}
+              />
+            <Text allowFontScaling={false} style={loginStyles.headerText}>Password:</Text>
+            <TextInput
+              style={loginStyles.inputStyle}
+              onChangeText={(text) => this.setState({passwordText})}
+              value={this.state.passwordText}
+              autoCorrect={false}
+              maxLength={20}
+              selectionColor={Scheme.color3}
+              keyboardType={'default'}
+              onFocus={this.textInputFocused.bind(this)}
+              onBlur={this.textInputBlur.bind(this)}
+              />
+            <Text allowFontScaling={false} >{this.state.message}</Text>
+          </View>
+        </ScrollView>
+        <ActionButton title={actionText}/>
+      </View>
+    )
+  }
+}
+
+module.exports = Login
