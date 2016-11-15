@@ -18,7 +18,7 @@ import {
 } from 'react-native'
 
 
-class Main extends Component {
+class List extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -98,4 +98,4 @@ class Main extends Component {
   }
 }
 
-module.exports = Main
+module.exports = List

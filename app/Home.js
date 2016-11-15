@@ -6,8 +6,9 @@ import { Router, Scene, Actions } from 'react-native-router-flux'
 const StatusBar = require('./components/StatusBar')
 const ActionButton = require('./components/ActionButton')
 const Login = require('./components/Login')
-const Main = require('./components/Main')
+const List = require('./components/List')
 const ListItem = require('./components/ListItem')
+const Location = require('./components/Location')
 import {
   AppRegistry,
   StyleSheet,
@@ -31,7 +32,7 @@ export default class GroceryApp extends Component {
       if(user) {
         this.setState({ user: user })
         console.log("USER: ", user)
-        Actions.MAIN()
+        Actions.LOCATION()
       }
     })
 
@@ -42,7 +43,7 @@ export default class GroceryApp extends Component {
         this.setState({ user: user })
         AsyncStorage.setItem('user', JSON.stringify(user))
         console.log("USER: ", user)
-        Actions.MAIN()
+        Actions.LOCATION()
       } else {
         this.setState({ user: null })
         console.log('No User!')
@@ -76,7 +77,8 @@ export default class GroceryApp extends Component {
       <Router>
         <Scene key="root">
           <Scene key="LOGIN" component={Login} title="Login" setUser={this._setUser} initial={true}/>
-          <Scene key="MAIN" component={Main} title="SomeApp"/>
+          <Scene key="LIST" component={List} title="SomeApp" hideNavBar={true}/>
+          <Scene key="LOCATION" component={Location} title="Location" hideNavBar={true}/>
         </Scene>
       </Router>
     )
