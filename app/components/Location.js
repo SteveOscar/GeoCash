@@ -6,56 +6,54 @@ import styles from '../styles/styles'
 import locationStyles from '../styles/locationStyles'
 const constants = styles.constants
 const { StyleSheet, Text, View, DeviceEventEmitter } = ReactNative
-const { Magnetometer } = require('NativeModules')
-Magnetometer.setMagnetometerUpdateInterval(0.1); // in seconds
+const { RNLocation: Location } = require('NativeModules')
 
-class Location extends Component {
+class LocationPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      initialPosition: 'unKnown',
-      x: 0,
-      y: 0,
-      z: 0,
-      data: ''
+      long: 'unknown',
+      lat: 'unknown',
+      heading: 'initial'
     }
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        var initialPosition = JSON.stringify(position);
-        this.setState({initialPosition});
+      (xy) => {
+        this.setState({ long: xy.coords.longitude, lat: xy.coords.latitude })
       },
       (error) => alert(JSON.stringify(error)),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     )
 
-    DeviceEventEmitter.addListener('MagnetometerData', function (data) {
-      this.setState({ x: data.magneticField.x.toFixed(0) })
-      this.setState({ y: data.magneticField.y.toFixed(0) })
-      this.setState({ z: data.magneticField.z.toFixed(0) })
-      this.setState({ data: data.magneticField })
-    }.bind(this))
-    Magnetometer.startMagnetometerUpdates(); // you'll start getting MagnetomerData events above
+    Location.requestAlwaysAuthorization()
+    Location.startUpdatingHeading()
+    DeviceEventEmitter.addListener(
+      'headingUpdated',
+      (data) => {
+        this.setState({ heading: Math.round(data.heading) })
+      }
+    )
+
   }
 
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchID);
+    Location.stopUpdatingHeading()
   }
 
   render() {
     return (
       <View style={locationStyles.container}>
-          <Text style={locationStyles.text}>Location</Text>
-          {/*<Text style={locationStyles.text}>{this.state.initialPosition}</Text>*/}
-          <Text style={locationStyles.text}>X: {this.state.x}</Text>
-          <Text style={locationStyles.text}>Y: {this.state.y}</Text>
-          <Text style={locationStyles.text}>Z: {this.state.z}</Text>
-          {/*<Text style={locationStyles.text}>{this.state.data}</Text>*/}
+        <Text style={locationStyles.text}>Location</Text>
+        <Text style={locationStyles.text}>Longitude: {this.state.long}</Text>
+        <Text style={locationStyles.text}>Latitude:  {this.state.lat}</Text>
+        <Text style={locationStyles.text}>* * *</Text>
+        <Text style={locationStyles.text}>Heading</Text>
+        <Text style={locationStyles.text}>X: {this.state.heading}</Text>
       </View>
     )
   }
 }
 
-module.exports = Location
+module.exports = LocationPage

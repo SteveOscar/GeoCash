@@ -10,6 +10,7 @@
     "firebase": "^3.6.0",
     "react": "15.3.2",
     "react-native": "^0.37.0",
+    "react-native-location": "^0.27.0",
     "react-native-motion-manager": "0.0.6",
     "react-native-router-flux": "^3.36.0",
     "react-native-sensor-manager": "^0.1.10"

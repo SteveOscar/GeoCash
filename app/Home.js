@@ -8,7 +8,7 @@ const ActionButton = require('./components/ActionButton')
 const Login = require('./components/Login')
 const List = require('./components/List')
 const ListItem = require('./components/ListItem')
-const Location = require('./components/Location')
+const LocationPage = require('./components/Location')
 import {
   AppRegistry,
   StyleSheet,
@@ -78,7 +78,7 @@ export default class GroceryApp extends Component {
         <Scene key="root">
           <Scene key="LOGIN" component={Login} title="Login" setUser={this._setUser}/>
           <Scene key="LIST" component={List} title="SomeApp" hideNavBar={true}/>
-          <Scene key="LOCATION" component={Location} title="Location" hideNavBar={true} initial={true}/>
+          <Scene key="LOCATION" component={LocationPage} title="Location" hideNavBar={true} initial={true}/>
         </Scene>
       </Router>
     )
