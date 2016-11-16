@@ -47,7 +47,7 @@ export default class GroceryApp extends Component {
       } else {
         this.setState({ user: null })
         console.log('No User!')
-        Actions.LOGIN()
+        Actions.LOCATION()
       }
     })
   }
@@ -76,9 +76,9 @@ export default class GroceryApp extends Component {
     return (
       <Router>
         <Scene key="root">
-          <Scene key="LOGIN" component={Login} title="Login" setUser={this._setUser} initial={true}/>
+          <Scene key="LOGIN" component={Login} title="Login" setUser={this._setUser}/>
           <Scene key="LIST" component={List} title="SomeApp" hideNavBar={true}/>
-          <Scene key="LOCATION" component={Location} title="Location" hideNavBar={true}/>
+          <Scene key="LOCATION" component={Location} title="Location" hideNavBar={true} initial={true}/>
         </Scene>
       </Router>
     )
