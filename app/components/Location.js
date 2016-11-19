@@ -14,7 +14,8 @@ class LocationPage extends Component {
     this.state = {
       long: 'unknown',
       lat: 'unknown',
-      heading: 'initial'
+      heading: 'initial',
+      bearing: 'unknown'
     }
   }
 
@@ -32,7 +33,8 @@ class LocationPage extends Component {
     DeviceEventEmitter.addListener(
       'headingUpdated',
       (data) => {
-        this.setState({ heading: Math.round(data.heading) })
+        let bearing = this.getBearing(this.state.lat, this.state.long, 39.576640, -104.988696)
+        this.setState({ heading: Math.round(data.heading), bearing: bearing })
       }
     )
 
@@ -40,6 +42,32 @@ class LocationPage extends Component {
 
   componentWillUnmount() {
     Location.stopUpdatingHeading()
+  }
+
+  radians(n) {
+    return n * (Math.PI / 180);
+  }
+  degrees(n) {
+    return n * (180 / Math.PI);
+  }
+
+  getBearing(startLat,startLong,endLat,endLong){
+    startLat = this.radians(startLat);
+    startLong = this.radians(startLong);
+    endLat = this.radians(endLat);
+    endLong = this.radians(endLong);
+
+    var dLong = endLong - startLong;
+
+    var dPhi = Math.log(Math.tan(endLat/2.0+Math.PI/4.0)/Math.tan(startLat/2.0+Math.PI/4.0));
+    if (Math.abs(dLong) > Math.PI){
+      if (dLong > 0.0)
+         dLong = -(2.0 * Math.PI - dLong);
+      else
+         dLong = (2.0 * Math.PI + dLong);
+    }
+
+    return (this.degrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
   }
 
   render() {
@@ -50,7 +78,9 @@ class LocationPage extends Component {
         <Text style={locationStyles.text}>Latitude:  {this.state.lat}</Text>
         <Text style={locationStyles.text}>* * *</Text>
         <Text style={locationStyles.text}>Heading</Text>
-        <Text style={locationStyles.text}>X: {this.state.heading}</Text>
+        <Text style={locationStyles.text}>{this.state.heading}</Text>
+        <Text style={locationStyles.text}>Bearing</Text>
+        <Text style={locationStyles.text}>{this.state.bearing}</Text>
       </View>
     )
   }
