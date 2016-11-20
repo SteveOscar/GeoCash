@@ -7,6 +7,7 @@ import locationStyles from '../styles/locationStyles'
 const constants = styles.constants
 const { StyleSheet, Text, View, DeviceEventEmitter } = ReactNative
 const { RNLocation: Location } = require('NativeModules')
+const { width, height } = require('Dimensions').get('window')
 
 class LocationPage extends Component {
   constructor(props) {
@@ -71,16 +72,21 @@ class LocationPage extends Component {
   }
 
   render() {
+    let { heading, bearing } = this.state
+    let colorUp = ((heading > (bearing - 90)) && (heading < (bearing + 90))) ? 'red' : 'white'
+    let colorDown = (colorUp === 'red') ? 'white' : 'red'
     return (
       <View style={locationStyles.container}>
-        <Text style={locationStyles.text}>Location</Text>
-        <Text style={locationStyles.text}>Longitude: {this.state.long}</Text>
-        <Text style={locationStyles.text}>Latitude:  {this.state.lat}</Text>
-        <Text style={locationStyles.text}>* * *</Text>
-        <Text style={locationStyles.text}>Heading</Text>
-        <Text style={locationStyles.text}>{this.state.heading}</Text>
-        <Text style={locationStyles.text}>Bearing</Text>
-        <Text style={locationStyles.text}>{this.state.bearing}</Text>
+        <View style={{ flexDirection: 'column' }}>
+          <View style={{ flex: 1, backgroundColor: colorUp, width: width }}>
+          </View>
+          <View style={{ flex: 1, backgroundColor: colorDown, alignItems: 'center' }}>
+            <Text style={locationStyles.text}>Heading</Text>
+            <Text style={locationStyles.text}>{this.state.heading}</Text>
+            <Text style={locationStyles.text}>Bearing</Text>
+            <Text style={locationStyles.text}>{this.state.bearing}</Text>
+          </View>
+        </View>
       </View>
     )
   }

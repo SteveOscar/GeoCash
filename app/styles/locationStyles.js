@@ -13,8 +13,11 @@ var locationStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  text: {
-
+  transponder: {
+    flexDirection: 'column'
+  },
+  segment: {
+    flex: 1
   }
 })
 
