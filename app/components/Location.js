@@ -71,21 +71,64 @@ class LocationPage extends Component {
     return (this.degrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
   }
 
+  between(lower, upper, point) {
+    if(upper < lower) {
+      upper += 360
+    }
+    if(point < lower) {
+      point += 360
+    }
+    return (point <= upper && point >= lower)
+  }
+
+  upPoints(bearing) {
+    return [Math.round((bearing + 315) % 360), Math.round((bearing + 45) % 360)]
+  }
+
+  rightPoints(bearing) {
+    return [Math.round((bearing + 225) % 360), Math.round((bearing + 315) % 360)]
+  }
+
+  downPoints(bearing) {
+    return [Math.round((bearing + 135) % 360), Math.round((bearing + 225) % 360)]
+  }
+
+  leftPoints(bearing) {
+    return [Math.round((bearing + 45) % 360), Math.round((bearing + 135) % 360)]
+  }
+
+
   render() {
     let { heading, bearing } = this.state
-    let colorUp = ((heading > (bearing - 90)) && (heading < (bearing + 90))) ? 'red' : 'white'
-    let colorDown = (colorUp === 'red') ? 'white' : 'red'
+    const upPoints = this.upPoints(bearing)
+    const rightPoints = this.rightPoints(bearing)
+    const downPoints = this.downPoints(bearing)
+    const leftPoints = this.leftPoints(bearing)
+    let colorUp = this.between(upPoints[0], upPoints[1], heading) ? 'red' : 'grey'
+    let colorRight = this.between(rightPoints[0], rightPoints[1], heading) ? 'red' : 'grey'
+    let colorDown = this.between(downPoints[0], downPoints[1], heading) ? 'red' : 'grey'
+    let colorLeft = this.between(leftPoints[0], leftPoints[1], heading) ? 'red' : 'grey'
     return (
       <View style={locationStyles.container}>
         <View style={{ flexDirection: 'column' }}>
-          <View style={{ flex: 1, backgroundColor: colorUp, width: width }}>
+
+          <View style={{flex: 1, width: width, alignItems: 'center'}}>
+            <View style={{ backgroundColor: colorUp, width: 40, height: 40 }}></View>
           </View>
-          <View style={{ flex: 1, backgroundColor: colorDown, alignItems: 'center' }}>
+
+          <View style={{flex: 1, width: width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <View style={{ backgroundColor: colorLeft, width: 40, height: 40 }}></View>
             <Text style={locationStyles.text}>Heading</Text>
             <Text style={locationStyles.text}>{this.state.heading}</Text>
             <Text style={locationStyles.text}>Bearing</Text>
             <Text style={locationStyles.text}>{this.state.bearing}</Text>
+            <View style={{ backgroundColor: colorRight, width: 40, height: 40 }}></View>
           </View>
+
+          <View style={{flex: 1, width: width, alignItems: 'center', justifyContent: 'flex-end'}}>
+            <View style={{ backgroundColor: colorDown, width: 40, height: 40 }}></View>
+          </View>
+
         </View>
       </View>
     )
