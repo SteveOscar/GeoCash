@@ -40,7 +40,6 @@ class LocationPage extends Component {
         this.setState({ heading: Math.round(data.heading), bearing: bearing, distance: Math.round(distance) })
       }
     )
-
   }
 
   componentWillUnmount() {
@@ -48,17 +47,17 @@ class LocationPage extends Component {
   }
 
   getDistance(lat1, lon1, lat2, lon2) {
-    let R = 6371; // Radius of the earth in km
-    let dLat = this.deg2rad(lat2-lat1);
-    let dLon = this.deg2rad(lon2-lon1);
+    let R = 6371 // Radius of the earth in km
+    let dLat = this.deg2rad(lat2-lat1)
+    let dLon = this.deg2rad(lon2-lon1)
     let a =
       Math.sin(dLat/2) * Math.sin(dLat/2) +
       Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
       Math.sin(dLon/2) * Math.sin(dLon/2)
-      ;
-    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    let d = R * c; // Distance in km
-    return d;
+
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    let d = R * c // Distance in km
+    return d
   }
 
   deg2rad(deg) {
@@ -66,30 +65,27 @@ class LocationPage extends Component {
   }
 
   radians(n) {
-    return n * (Math.PI / 180);
+    return n * (Math.PI / 180)
   }
   degrees(n) {
-    return n * (180 / Math.PI);
+    return n * (180 / Math.PI)
   }
 
   getBearing(startLat, startLong, endLat, endLong){
-    startLat = this.radians(startLat);
-    startLong = this.radians(startLong);
-    endLat = this.radians(endLat);
-    endLong = this.radians(endLong);
-
-    let dLong = endLong - startLong;
-
-    let dPhi = Math.log(Math.tan(endLat/2.0+Math.PI/4.0)/Math.tan(startLat/2.0+Math.PI/4.0));
+    startLat = this.radians(startLat)
+    startLong = this.radians(startLong)
+    endLat = this.radians(endLat)
+    endLong = this.radians(endLong)
+    let dLong = endLong - startLong
+    let dPhi = Math.log(Math.tan(endLat/2.0+Math.PI/4.0)/Math.tan(startLat/2.0+Math.PI/4.0))
     if (Math.abs(dLong) > Math.PI){
       if (dLong > 0.0) {
-         dLong = -(2.0 * Math.PI - dLong);
+         dLong = -(2.0 * Math.PI - dLong)
       } else {
-        dLong = (2.0 * Math.PI + dLong);
+        dLong = (2.0 * Math.PI + dLong)
       }
     }
-
-    return (this.degrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
+    return (this.degrees(Math.atan2(dLong, dPhi)) + 360.0) % 360.0
   }
 
   between(lower, upper, point) {
@@ -114,19 +110,17 @@ class LocationPage extends Component {
     return [Math.round((bearing + 45) % 360), Math.round((bearing + 135) % 360)]
   }
 
-
   render() {
     let { heading, bearing, distance } = this.state
-
     const upPoints = this.upPoints(bearing)
     const rightPoints = this.rightPoints(bearing)
     const downPoints = this.downPoints(bearing)
     const leftPoints = this.leftPoints(bearing)
 
-    let colorUp = this.between(upPoints[0], upPoints[1], heading) ? 'red' : 'grey'
-    let colorRight = this.between(rightPoints[0], rightPoints[1], heading) ? 'red' : 'grey'
-    let colorDown = this.between(downPoints[0], downPoints[1], heading) ? 'red' : 'grey'
-    let colorLeft = this.between(leftPoints[0], leftPoints[1], heading) ? 'red' : 'grey'
+    const colorUp = this.between(upPoints[0], upPoints[1], heading) ? 'red' : 'grey'
+    const colorRight = this.between(rightPoints[0], rightPoints[1], heading) ? 'red' : 'grey'
+    const colorDown = this.between(downPoints[0], downPoints[1], heading) ? 'red' : 'grey'
+    const colorLeft = this.between(leftPoints[0], leftPoints[1], heading) ? 'red' : 'grey'
 
     return (
       <View style={locationStyles.container}>
