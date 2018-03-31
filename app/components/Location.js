@@ -22,6 +22,7 @@ class LocationPage extends Component {
   }
 
   componentDidMount() {
+    Location.requestAlwaysAuthorization()
     navigator.geolocation.getCurrentPosition(
       (xy) => {
         this.setState({ long: xy.coords.longitude, lat: xy.coords.latitude })
@@ -30,7 +31,6 @@ class LocationPage extends Component {
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     )
 
-    Location.requestAlwaysAuthorization()
     Location.startUpdatingHeading()
     DeviceEventEmitter.addListener(
       'headingUpdated',
