@@ -35,8 +35,9 @@ class LocationPage extends Component {
     DeviceEventEmitter.addListener(
       'headingUpdated',
       (data) => {
-        let bearing = this.getBearing(this.state.lat, this.state.long, 39.576640, -104.988696)
-        let distance = this.getDistance(this.state.lat, this.state.long, 39.576640, -104.988696)
+        // Home
+        let bearing = this.getBearing(this.state.lat, this.state.long, 39.763206, -105.011107)
+        let distance = this.getDistance(this.state.lat, this.state.long, 39.763206, -105.011107)
         this.setState({ heading: Math.round(data.heading), bearing: bearing, distance: Math.round(distance) })
       }
     )

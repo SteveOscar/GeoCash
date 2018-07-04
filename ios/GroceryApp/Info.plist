@@ -33,6 +33,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This is the plist item for NSLocationAlwaysAndWhenInUsageDescription</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This is the plist item for NSLocationAlwaysUsageDescription</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
