@@ -23,28 +23,35 @@ class LocationPage extends Component {
 
   componentDidMount() {
     Location.requestAlwaysAuthorization()
-    navigator.geolocation.getCurrentPosition(
-      (xy) => {
-        this.setState({ long: xy.coords.longitude, lat: xy.coords.latitude })
-      },
-      (error) => alert(JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    )
+    this.updatePosition()
 
     Location.startUpdatingHeading()
     DeviceEventEmitter.addListener(
       'headingUpdated',
       (data) => {
-        // Home
         let bearing = this.getBearing(this.state.lat, this.state.long, 39.763206, -105.011107)
         let distance = this.getDistance(this.state.lat, this.state.long, 39.763206, -105.011107)
-        this.setState({ heading: Math.round(data.heading), bearing: bearing, distance: Math.round(distance) })
+        this.setState({ heading: Math.round(data.heading), bearing: bearing, distance: distance })
       }
     )
+    this.interval = setInterval(() => this.updatePosition(), 3000);
   }
+
 
   componentWillUnmount() {
     Location.stopUpdatingHeading()
+    clearInterval(this.interval);
+  }
+
+  updatePosition() {
+    navigator.geolocation.getCurrentPosition(
+      (xy) => {
+        let distance = this.getDistance(xy.coords.latitude, xy.coords.longitude, 39.763206, -105.011107)
+        this.setState({ long: xy.coords.longitude, lat: xy.coords.latitude, distance: distance })
+      },
+      (error) => alert(JSON.stringify(error)),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    )
   }
 
   getDistance(lat1, lon1, lat2, lon2) {
@@ -123,6 +130,10 @@ class LocationPage extends Component {
     const colorDown = this.between(downPoints[0], downPoints[1], heading) ? 'red' : 'grey'
     const colorLeft = this.between(leftPoints[0], leftPoints[1], heading) ? 'red' : 'grey'
 
+    const unit = distance > 1 ? 'KM' : 'M'
+
+    const roundedDistance = distance > 1 ? Math.round(distance) : Math.round(distance * 1000)
+
     return (
       <View style={locationStyles.container}>
         <View style={{ flexDirection: 'column' }}>
@@ -134,9 +145,9 @@ class LocationPage extends Component {
           <View style={{flex: 1, width: width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{ backgroundColor: colorLeft, width: 40, height: 40 }}></View>
             <Text style={locationStyles.text}>Heading</Text>
-            <Text style={locationStyles.text}>{this.state.heading}</Text>
+            <Text style={locationStyles.text}>{heading}</Text>
             <Text style={locationStyles.text}>DISTANCE:</Text>
-            <Text style={locationStyles.text}>{distance}</Text>
+            <Text style={locationStyles.text}>{roundedDistance} {unit}</Text>
             <View style={{ backgroundColor: colorRight, width: 40, height: 40 }}></View>
           </View>
 
